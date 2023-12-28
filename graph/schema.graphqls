@@ -13,3 +13,11 @@ type Joke {
   id: ID!
   text: String!
 }
+
+type Mutation {
+  createJoke(input: JokeInput!): Joke!
+}
+
+input JokeInput {
+  content: String!
+}

@@ -48,3 +48,16 @@ func GetAJoke(id string) *model.Joke {
 
 	return joke
 }
+
+func CreateNewJoke(input model.JokeInput) *model.Joke {
+	db := utils.ConnectDB()
+	dbJoke := &dbModels.Joke{
+		Text: input.Content,
+	}
+	db.Create(dbJoke)
+	return &model.Joke{
+		ID:   fmt.Sprint(dbJoke.ID),
+		Text: dbJoke.Text,
+	}
+
+}

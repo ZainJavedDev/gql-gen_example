@@ -6,3 +6,7 @@ type Joke struct {
 	ID   string `json:"id"`
 	Text string `json:"text"`
 }
+
+type JokeInput struct {
+	Content string `json:"content"`
+}

@@ -11,6 +11,12 @@ import (
 	"github.com/ZainJavedDev/gqlgen-jokes-2/graph/model"
 )
 
+// CreateJoke is the resolver for the createJoke field.
+func (r *mutationResolver) CreateJoke(ctx context.Context, input model.JokeInput) (*model.Joke, error) {
+	joke := controllers.CreateNewJoke(input)
+	return joke, nil
+}
+
 // Jokes is the resolver for the jokes field.
 func (r *queryResolver) Jokes(ctx context.Context) ([]*model.Joke, error) {
 	jokes := controllers.GetAllJokes()
@@ -23,7 +29,11 @@ func (r *queryResolver) Joke(ctx context.Context, id string) (*model.Joke, error
 	return joke, nil
 }
 
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
