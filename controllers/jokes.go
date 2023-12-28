@@ -52,7 +52,7 @@ func GetAJoke(id string) *model.Joke {
 func CreateNewJoke(input model.JokeInput) *model.Joke {
 	db := utils.ConnectDB()
 	dbJoke := &dbModels.Joke{
-		Text: input.Content,
+		Text: input.Text,
 	}
 	db.Create(dbJoke)
 	return &model.Joke{

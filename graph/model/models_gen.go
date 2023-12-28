@@ -8,5 +8,5 @@ type Joke struct {
 }
 
 type JokeInput struct {
-	Content string `json:"content"`
+	Text string `json:"text"`
 }

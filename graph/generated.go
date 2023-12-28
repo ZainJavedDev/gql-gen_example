@@ -2508,20 +2508,20 @@ func (ec *executionContext) unmarshalInputJokeInput(ctx context.Context, obj int
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"content"}
+	fieldsInOrder := [...]string{"text"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "content":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
+		case "text":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Content = data
+			it.Text = data
 		}
 	}
 
