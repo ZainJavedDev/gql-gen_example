@@ -18,25 +18,13 @@ func (r *queryResolver) Jokes(ctx context.Context) ([]*model.Joke, error) {
 	return jokes, nil
 }
 
+// Joke is the resolver for the joke field.
 func (r *queryResolver) Joke(ctx context.Context, id string) (*model.Joke, error) {
-	jokes := controllers.GetAllJokes()
-	return jokes[0], nil
+	joke := controllers.GetAJoke(id)
+	return joke, nil
 }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-//
-//     func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-//     panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
-//     }

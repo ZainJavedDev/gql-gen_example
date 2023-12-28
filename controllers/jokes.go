@@ -30,3 +30,26 @@ func GetAllJokes() []*model.Joke {
 
 	return jokes
 }
+
+func GetAJoke(id string) *model.Joke {
+
+	db := utils.ConnectDB()
+
+	dbJoke := &dbModels.Joke{}
+	result := db.Where("id = ?", id).First(dbJoke)
+	if result.Error != nil {
+		fmt.Println(result.Error)
+	}
+
+	// jokes := []*model.Joke{}
+
+	// for _, dbJoke := range dbJokes {
+	joke := &model.Joke{
+		ID:   fmt.Sprint(dbJoke.ID), // Convert the ID to string
+		Text: dbJoke.Text,
+	}
+	// jokes = append(jokes, joke)
+	// }
+
+	return joke
+}

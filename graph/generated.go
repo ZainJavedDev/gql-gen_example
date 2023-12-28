@@ -52,12 +52,14 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Joke  func(childComplexity int, id string) int
 		Jokes func(childComplexity int) int
 	}
 }
 
 type QueryResolver interface {
 	Jokes(ctx context.Context) ([]*model.Joke, error)
+	Joke(ctx context.Context, id string) (*model.Joke, error)
 }
 
 type executableSchema struct {
@@ -92,6 +94,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Joke.Text(childComplexity), true
+
+	case "Query.joke":
+		if e.complexity.Query.Joke == nil {
+			break
+		}
+
+		args, err := ec.field_Query_joke_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Joke(childComplexity, args["id"].(string)), true
 
 	case "Query.jokes":
 		if e.complexity.Query.Jokes == nil {
@@ -220,6 +234,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_joke_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -395,6 +424,64 @@ func (ec *executionContext) fieldContext_Query_jokes(ctx context.Context, field 
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Joke", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_joke(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_joke(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Joke(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Joke)
+	fc.Result = res
+	return ec.marshalOJoke2ᚖgithubᚗcomᚋZainJavedDevᚋgqlgenᚑjokesᚑ2ᚋgraphᚋmodelᚐJoke(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_joke(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Joke_id(ctx, field)
+			case "text":
+				return ec.fieldContext_Joke_text(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Joke", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_joke_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -2394,6 +2481,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "joke":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_joke(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -3127,6 +3233,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOJoke2ᚖgithubᚗcomᚋZainJavedDevᚋgqlgenᚑjokesᚑ2ᚋgraphᚋmodelᚐJoke(ctx context.Context, sel ast.SelectionSet, v *model.Joke) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Joke(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
