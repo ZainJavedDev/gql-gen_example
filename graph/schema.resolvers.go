@@ -13,7 +13,6 @@ import (
 
 // Jokes is the resolver for the jokes field.
 func (r *queryResolver) Jokes(ctx context.Context) ([]*model.Joke, error) {
-	// panic(fmt.Errorf("not implemented: Jokes - jokes"))
 	jokes := controllers.GetAllJokes()
 	return jokes, nil
 }
